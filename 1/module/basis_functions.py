@@ -1,6 +1,7 @@
 from sympy import integrals, simplify, cos
 from sympy.abc import x
 
+
 def Jacobi(k, n):
     pj = [x] * (n + 1)
 
@@ -43,10 +44,23 @@ def base_funs(k, n):
     for i in range(n):
         phi[i] = (1 - x ** 2) * jacobs[i]
         phi[i] = simplify(phi[i])
+
         dphi[i] = (-2) * (i + 1) * (1 - x ** 2) ** (k - 1) * djacobs[i + 1]
         dphi[i] = simplify(dphi[i])
 
     return phi, dphi
+
+
+def base_fun_ddphi(k, n):
+    ddphi = [x] * (n)
+    jacobs = Jacobi(k, n)
+    djacobs = Jacobi(k - 1, n + 1)  # это не производные полиномо Якоби
+    for i in range(n):
+        tmp1 = (k - 1) * (1 - x ** 2) ** (k - 2) * djacobs[i + 1]
+        tmp2 = (1 - x ** 2) ** (k - 1) * ((i + 1 + 2 * (k - 1) + 1) / 2) * jacobs[i]
+        ddphi[i] = (-2) * (i + 1) * ( tmp1 + tmp2 )
+        ddphi[i] = simplify(ddphi[i])
+    return ddphi
 
 
 def base_funs_values(k, n, y):
@@ -58,3 +72,17 @@ def base_funs_values(k, n, y):
         phi[i] = (1 - y ** 2) * jacobs[i]
         dphi[i] = (-2) * (i + 1) * (1 - y ** 2) ** (k - 1) * djacobs[i + 1]
     return phi, dphi
+
+
+def base_funs_val_ddphi(k, n, y):
+    ddphi = [0] * n
+    jacobs = Jacobi_value(k, n, y)
+    djacobs = Jacobi_value(k - 1, n + 1, y)  # это не производные полиномо Якоби
+    for i in range(n):
+        tmp1 = (1 - y ** 2) ** (k - 2) * (k - 1) * djacobs[i + 1]
+        tmp2 = (1 - y ** 2) ** (k - 1) * ((i + 1 + 2 * (k - 1) + 1) / 2) * jacobs[i]
+        ddphi[i] = (-2) * (i + 1) * ( tmp1 + tmp2 )
+    return ddphi
+
+
+
